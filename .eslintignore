@@ -3,4 +3,5 @@ dist
 logs
 config
 coverage
+client
 **/*.spec.ts

@@ -162,7 +162,7 @@ export default class Todo implements ITodo {
       await db.update(sqlQuery);
       return true;
     } catch (err) {
-      throw err;
+      return false;
     }
   }
 
