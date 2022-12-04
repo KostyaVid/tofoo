@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router';
 import './App.css';
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
-import Signup from './pages/Signup';
+import SignUp from './pages/SignUp';
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
       <Header />
       <main className="main">
         <Routes>
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </main>
       <Footer />

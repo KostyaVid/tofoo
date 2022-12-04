@@ -1,14 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { userHomeSlice } from './slices/userHomeSlice';
+import { homeUserSlice } from './slices/homeUserSlice';
 
 export const store = configureStore({
   reducer: {
-    [userHomeSlice.reducerPath]: userHomeSlice.reducer,
+    homeUser: homeUserSlice.reducer,
   },
-  middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(userHomeSlice.middleware);
-  },
+  // middleware: (getDefaultMiddleware) => {
+  //   return getDefaultMiddleware().concat(userHomeSlice.middleware);
+  // },
 });
 
 setupListeners(store.dispatch);
