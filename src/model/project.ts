@@ -3,19 +3,19 @@ import { spliceString, toMySqlDate, validateID, validateIDNotNull } from './../u
 import db from './db';
 
 export interface IProject {
-  project_id?: number;
+  project_id: number;
   name: string;
-  status?: Status;
-  create_date?: string;
+  status: Status;
+  create_date: string;
   end_date: string;
   company_id: number;
 }
 
 export class Project implements IProject {
-  project_id?: number;
+  project_id: number;
   name: string;
-  status?: Status;
-  create_date?: string;
+  status: Status;
+  create_date: string;
   end_date: string;
   company_id: number;
   private constructor(project: IProject) {
@@ -27,7 +27,7 @@ export class Project implements IProject {
     this.company_id = project.company_id;
   }
 
-  static async create(project: IProject) {
+  static async create(project: { name: string; end_date: string; company_id: number }) {
     try {
       const projectValid = Project.validate(project);
 
@@ -70,7 +70,7 @@ export class Project implements IProject {
     return Boolean(projectOut.length);
   }
 
-  static validate(project: IProject): IProject {
+  static validate(project: { name: string; end_date: string; company_id: number }) {
     return {
       name: spliceString(project.name, 50),
       end_date: toMySqlDate(project.end_date),

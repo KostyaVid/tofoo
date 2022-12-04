@@ -3,12 +3,9 @@ import db from './db';
 import escape from 'escape-html';
 import { StatusTodo } from './../types/types';
 
-export interface ITodo {
-  todo_id?: number;
+export interface ITodoBase {
   title: string;
   body: string | null;
-  status?: StatusTodo;
-  create_date?: string;
   deadline: string | null;
   author_id: number | null;
   assignee_id: number | null;
@@ -18,12 +15,18 @@ export interface ITodo {
   company_id: number;
 }
 
+export interface ITodo extends ITodoBase {
+  todo_id: number;
+  status: StatusTodo;
+  create_date: string;
+}
+
 export default class Todo implements ITodo {
-  todo_id?: number;
+  todo_id: number;
   title: string;
   body: string | null;
-  status?: StatusTodo;
-  create_date?: string;
+  status: StatusTodo;
+  create_date: string;
   deadline: string | null;
   author_id: number | null;
   assignee_id: number | null;
@@ -46,7 +49,7 @@ export default class Todo implements ITodo {
     this.company_id = todo.company_id;
   }
 
-  static async create(todo: ITodo) {
+  static async create(todo: ITodoBase) {
     try {
       const todoValidate = this.validate(todo);
 
@@ -166,7 +169,7 @@ export default class Todo implements ITodo {
     }
   }
 
-  static validate(todo: ITodo): ITodo {
+  static validate(todo: ITodoBase) {
     return {
       title: `'${spliceString(todo.title, 50)}'`,
       body: todo.body === null ? 'null' : `'${spliceString(todo.body, 1000)}'`,

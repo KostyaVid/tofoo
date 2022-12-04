@@ -4,7 +4,7 @@ import * as EmailValidator from 'email-validator';
 import { AuthenticationError, BaseError, EmailExistError, ValidateError } from '../utils/error';
 import { getCryptoPassword } from '../utils/crypto';
 
-export interface IUser extends Express.User {
+export interface IUser {
   user_id: number;
   username: string;
   email: string;
@@ -23,7 +23,7 @@ export class User {
   sprint_id?: number | null;
   company_id?: number | null;
 
-  constructor(public readonly id: number, public username: string, public email: string) {
+  constructor(public readonly user_id: number, public username: string, public email: string) {
     this.project_id = null;
     this.sprint_id = null;
     this.company_id = null;
@@ -139,13 +139,13 @@ export class User {
 
   /**
    * Check User with id and password
-   * @param id
+   * @param user_id
    * @param password the password will be encoded
    * @return IUser | AuthenticationError
    */
-  static async checkAuthLocalByID(id: number, password: string) {
+  static async checkAuthLocalByID(user_id: number, password: string) {
     const hashPassword = getCryptoPassword(password);
-    const user = await db.get(`SELECT user_id, password FROM user WHERE user_id='${id}'`);
+    const user = await db.get(`SELECT user_id, password FROM user WHERE user_id='${user_id}'`);
     if (user.length === 0) {
       throw new AuthenticationError('Wrong login or password');
     }
@@ -156,9 +156,9 @@ export class User {
     throw new AuthenticationError('Wrong login or password');
   }
 
-  static async findUserByID(id: number) {
+  static async findUserByID(user_id: number) {
     const user = await db.get(
-      `SELECT user_id, project_id, sprint_id, company_id FROM user WHERE user_id=${id}`,
+      `SELECT user_id, project_id, sprint_id, company_id FROM user WHERE user_id=${user_id}`,
     );
     if (user.length === 0) {
       throw new AuthenticationError('Wrong login or password');

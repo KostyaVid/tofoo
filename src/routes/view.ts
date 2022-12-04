@@ -36,7 +36,7 @@ router.post('/signup', async (req, res, next) => {
   try {
     if ('email' in req.body && 'password' in req.body && 'username' in req.body) {
       const user = await User.create(req.body.username, req.body.password, req.body.email);
-      const JWTToken = createJWTToken(user.id, user.email);
+      const JWTToken = createJWTToken(user.user_id, user.email);
       res.status(200).send({ JWTToken });
     } else {
       res.status(401).send({ message: 'Form not completed' });
@@ -48,7 +48,6 @@ router.post('/signup', async (req, res, next) => {
 
 router.use(async (req, res, next) => {
   try {
-    console.log(req.session);
     if ('passport' in req.session) {
       if ('user' in <Record<string, object>>req.session.passport) {
         next();

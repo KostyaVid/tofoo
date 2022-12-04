@@ -3,22 +3,22 @@ import { spliceString, toMySqlDate, validateID, validateIDNotNull } from './../u
 import db from './db';
 
 export interface ISprint {
-  sprint_id?: number;
+  sprint_id: number;
   project_id: number;
   company_id: number;
   name: string;
-  status?: Status;
-  create_date?: string;
+  status: Status;
+  create_date: string;
   end_date: string;
 }
 
 export class Sprint implements ISprint {
-  sprint_id?: number;
+  sprint_id: number;
   project_id: number;
   company_id: number;
   name: string;
-  status?: Status;
-  create_date?: string;
+  status: Status;
+  create_date: string;
   end_date: string;
   private constructor(sprint: ISprint) {
     this.sprint_id = sprint.sprint_id;
@@ -30,7 +30,12 @@ export class Sprint implements ISprint {
     this.end_date = sprint.end_date;
   }
 
-  static async create(sprint: ISprint) {
+  static async create(sprint: {
+    project_id: number;
+    company_id: number;
+    name: string;
+    end_date: string;
+  }) {
     try {
       const sprintValid = Sprint.validate(sprint);
 
@@ -73,7 +78,12 @@ export class Sprint implements ISprint {
     return Boolean(sprintOut.length);
   }
 
-  static validate(spring: ISprint): ISprint {
+  static validate(spring: {
+    project_id: number;
+    company_id: number;
+    name: string;
+    end_date: string;
+  }) {
     return {
       project_id: validateIDNotNull(spring.project_id),
       company_id: validateIDNotNull(spring.company_id),

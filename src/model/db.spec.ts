@@ -4,8 +4,10 @@ import { ISprint, Sprint } from './sprints';
 import escape from 'escape-html';
 import db from './db';
 import { User } from './user';
-import Todo, { ITodo } from './todo';
+import Todo, { ITodo, ITodoBase } from './todo';
 
+let userGlobal: User;
+let companyGlobal: Company;
 beforeAll(async () => {
   return await db.init();
 });
@@ -17,10 +19,9 @@ afterAll(async () => {
 describe('DataBase ', () => {
   describe('DataBase todo', () => {
     it('Create new todo', async () => {
-      const todoData: ITodo = {
+      const todoData: ITodoBase = {
         title: 'title',
         body: 'body',
-        status: 0,
         deadline: null,
         author_id: 1,
         assignee_id: null,
@@ -60,7 +61,7 @@ describe('DataBase ', () => {
 
   describe('DataBase sprint', () => {
     it('Create new sprint', async () => {
-      const sprintData: ISprint = {
+      const sprintData = {
         project_id: 2,
         company_id: 1,
         name: 'test Sprint',
@@ -75,7 +76,7 @@ describe('DataBase ', () => {
 
   describe('DataBase project', () => {
     it('Create new project', async () => {
-      const projectData: IProject = {
+      const projectData = {
         name: 'test Project',
         end_date: new Date(Date.now() + 3600000).toString(),
         company_id: 1,
@@ -89,13 +90,11 @@ describe('DataBase ', () => {
 
   describe('DataBase company', () => {
     it('Create new company', async () => {
-      const companyData: ICompany = {
-        name: 'test Company',
-      };
-      const company = await Company.create(companyData.name);
-      expect(company?.name).toEqual(companyData.name);
+      const companyName = 'test Company';
+      const company = await Company.create(companyName);
+      expect(company.name).toEqual(companyName);
 
-      await db.delete(`DELETE FROM company WHERE company_id=${company?.company_id}`);
+      await db.delete(`DELETE FROM company WHERE company_id=${company.company_id}`);
     });
   });
 });

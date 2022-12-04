@@ -3,15 +3,23 @@ import mysql from 'mysql2/promise';
 import { BaseError } from '../utils/error';
 
 class Database {
-  private db: mysql.Pool | undefined;
+  private db: mysql.Pool;
+
+  constructor() {
+    const param: mysql.PoolOptions = config.get('db') || {
+      database: 'test',
+      host: 'localhost',
+      port: 3306,
+      user: 'root',
+      password: 'example',
+    };
+    this.db = mysql.createPool(param);
+  }
 
   /**
    * call before calling other methods
    */
   async init() {
-    const param: mysql.PoolOptions = config.get('db');
-    this.db = await mysql.createPool(param);
-
     await this.db.query(
       `CREATE TABLE IF NOT EXISTS company (company_id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(50), create_date DATETIME DEFAULT NOW())`,
     );
@@ -36,36 +44,27 @@ class Database {
    * call before exit the app
    */
   async close() {
-    if (this.db) await this.db?.end();
+    await this.db.end();
   }
 
   async create(sqlQuery: string) {
-    if (this.db) {
-      return await this.db.query(sqlQuery);
-    }
+    return await this.db.query(sqlQuery);
     throw new BaseError('Error server', `What's wrong`);
   }
 
   async get(sqlQuery: string) {
-    if (this.db) {
-      const [dbObject] = await this.db.query(sqlQuery);
-      return dbObject as mysql.RowDataPacket[];
-    }
+    const [dbObject] = await this.db.query(sqlQuery);
+    return dbObject as mysql.RowDataPacket[];
     throw new BaseError('Error server', `What's wrong`);
   }
 
   async delete(sqlQuery: string) {
-    if (this.db) {
-      return await this.db.query(sqlQuery);
-    }
+    return await this.db.query(sqlQuery);
     throw new BaseError('Error server', `What's wrong`);
   }
 
   async update(sqlQuery: string) {
-    if (this.db) {
-      await this.db.query(sqlQuery);
-      return;
-    }
+    await this.db.query(sqlQuery);
     throw new BaseError('Error server', `What's wrong`);
   }
 }
