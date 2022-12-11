@@ -7,25 +7,25 @@ import { sessionParams, sessionParamsWithCompany, Status, StatusTodo } from './.
 import { Project } from './../model/project';
 import { Sprint } from './../model/sprints';
 import Todo from './../model/todo';
+import { BaseError, ValidateError } from './../utils/error';
 
 const router = express.Router();
 
 router
-  .get('/login', passport.authenticate('jwt', { session: true }), function (req, res, next) {
-    try {
-      res.status(200).send({ session: 'start' });
-    } catch (err) {
-      next(err);
-    }
+  .get('/login', passport.authenticate('jwt', { session: true }), function (req, res) {
+    res.status(200).send({ user: (req.session as sessionParamsWithCompany).passport.user });
+    return;
   })
   .post('/login', async (req, res, next) => {
     try {
       if ('email' in req.body && 'password' in req.body) {
         const user = await User.checkAuthLocal(req.body.email, req.body.password);
         const JWTToken = createJWTToken(user.user_id, user.email);
-        res.status(200).send({ JWTToken });
+        res.status(200).send({ JWTToken, user });
+        return;
       } else {
         res.status(401).send({ message: 'Form not completed' });
+        return;
       }
     } catch (err) {
       next(err);
@@ -34,12 +34,23 @@ router
 
 router.post('/signup', async (req, res, next) => {
   try {
-    if ('email' in req.body && 'password' in req.body && 'username' in req.body) {
+    if (
+      'email' in req.body &&
+      'password' in req.body &&
+      'repeatPassword' in req.body &&
+      'username' in req.body
+    ) {
+      if (req.body.password !== req.body.repeatPassword) {
+        next(new ValidateError('Passwords do not match'));
+        return;
+      }
       const user = await User.create(req.body.username, req.body.password, req.body.email);
       const JWTToken = createJWTToken(user.user_id, user.email);
-      res.status(200).send({ JWTToken });
+      res.status(200).send({ JWTToken, user });
+      return;
     } else {
       res.status(401).send({ message: 'Form not completed' });
+      return;
     }
   } catch (err) {
     next(err);
@@ -53,19 +64,12 @@ router.use(async (req, res, next) => {
         next();
       } else {
         res.status(401).send({ message: 'AuthenticationError' });
+        return;
       }
     } else {
       res.status(401).send({ message: 'AuthenticationError' });
+      return;
     }
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.get('/', async (req, res, next) => {
-  try {
-    res.statusCode = 200;
-    res.send('hello');
   } catch (err) {
     next(err);
   }
@@ -87,18 +91,25 @@ router.post('/company', async (req, res, next) => {
     res.status(400).send({ message: 'invalid request' });
     return;
   }
-  if ((req.session as sessionParams).passport.user.company_id) {
-    res.status(400).send({ message: 'You are already a member of the company' });
-    return;
-  }
   try {
+    const user = await User.getWithoutCompany((req.session as sessionParams).passport.user.user_id);
+    if (!user) {
+      next(new BaseError('Unknown error', 'Unknown error'));
+      return;
+    }
+    if (user.company_id) {
+      res.status(400).send({ message: 'You are already a member of the company' });
+      return;
+    }
+
     const company = await Company.create(name);
     if (typeof company !== 'undefined' && typeof company.company_id !== 'undefined') {
       await User.setCompany(
         company.company_id,
         (req.session as sessionParams).passport.user.user_id,
       );
-      res.status(200).send(company);
+      const JWTToken = createJWTToken(user.user_id, user.email);
+      res.status(200).send({ company, JWTToken });
     }
   } catch (err) {
     next(err);
@@ -302,6 +313,22 @@ router.get('/project/:project/sprint/:sprint/todo/:todo', async (req, res, next)
   try {
     const todo = await Todo.getAndProjectAndSprint(todo_id, project_id, sprint_id, company_id);
     res.status(200).send(todo);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/company/leave', async (req, res, next) => {
+  const user_id = (req.session as sessionParamsWithCompany)?.passport?.user?.user_id;
+  try {
+    await User.setCompany(null, user_id);
+    const user = await User.getWithoutCompany(user_id);
+    if (!user) {
+      res.status(400).send({ message: 'User not found' });
+      return;
+    }
+    const JWTToken = createJWTToken(user.user_id, user.email);
+    res.status(200).send({ JWTToken, user });
   } catch (err) {
     next(err);
   }

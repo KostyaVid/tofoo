@@ -5,6 +5,8 @@ export default function loggerMiddleware(req: Request, res: Response, next: Next
   const date = Date.now();
   next();
   logger.info(
-    `Time: ${new Date().toISOString()}. Method: ${req.method}. Duration: ${Date.now() - date}ms`,
+    `Time: ${new Date().toISOString()}. Method: ${req.method}. Path: ${req.path}. Duration: ${
+      Date.now() - date
+    }ms`,
   );
 }

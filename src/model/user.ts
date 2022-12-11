@@ -75,7 +75,7 @@ export class User {
     return true;
   }
 
-  static async setCompany(company_id: number, user_id: number) {
+  static async setCompany(company_id: number | null, user_id: number) {
     const sqlQuery = `UPDATE user SET company_id=${company_id} WHERE user_id=${user_id}`;
     await db.update(sqlQuery);
   }
@@ -91,26 +91,35 @@ export class User {
   }
 
   static async get(user_id: number, company_id: number) {
-    const sqlQuery = `SELECT * FROM user WHERE company_id=${company_id} AND user_id=${user_id}`;
+    const sqlQuery = `SELECT * FROM user INNER JOIN company USING(company_id) WHERE company_id=${company_id} AND user_id=${user_id}`;
+    const usersOut = await db.get(sqlQuery);
+    console.log(usersOut[0]);
+
+    if (usersOut.length === 0) return false;
+    return usersOut[0] as IUser;
+  }
+
+  static async getWithoutCompany(user_id: number) {
+    const sqlQuery = `SELECT user_id, username, email, project_id, sprint_id, company_id  FROM user WHERE user_id=${user_id}`;
     const usersOut = await db.get(sqlQuery);
     if (usersOut.length === 0) return false;
     return usersOut[0] as IUser;
   }
 
   static async getAllByCompany(company_id: number) {
-    const sqlQuery = `SELECT * FROM user WHERE company_id=${company_id}`;
+    const sqlQuery = `SELECT user_id, username, email, project_id, sprint_id, company_id FROM user WHERE company_id=${company_id}`;
     const usersOut = await db.get(sqlQuery);
     return usersOut as IUser[];
   }
 
   static async getAllByProject(project_id: number) {
-    const sqlQuery = `SELECT * FROM user WHERE project_id=${project_id}`;
+    const sqlQuery = `SELECT user_id, username, email, project_id, sprint_id, company_id FROM user WHERE project_id=${project_id}`;
     const usersOut = await db.get(sqlQuery);
     return usersOut as IUser[];
   }
 
   static async getAllBySprint(sprint_id: number) {
-    const sqlQuery = `SELECT * FROM user WHERE sprint_id=${sprint_id}`;
+    const sqlQuery = `SELECT user_id, username, email, project_id, sprint_id, company_id FROM user WHERE sprint_id=${sprint_id}`;
     const usersOut = await db.get(sqlQuery);
     return usersOut as IUser[];
   }
@@ -125,13 +134,14 @@ export class User {
     const hashPassword = getCryptoPassword(password);
     const mail = escape(email);
     const user = await db.get(
-      `SELECT user_id, username, password, email, project_id, sprint_id, company_id FROM user WHERE email='${mail}'`,
+      `SELECT user_id, username, password, email, project_id, sprint_id, company_id, company.name as company_name FROM user LEFT JOIN company USING(company_id) WHERE email='${mail}'`,
     );
     if (user.length === 0) {
       throw new AuthenticationError('Wrong login or password');
     }
 
     if (user[0].password === hashPassword.toString()) {
+      delete user[0].password;
       return user[0] as IUser;
     }
     throw new AuthenticationError('Wrong login or password');
@@ -158,7 +168,7 @@ export class User {
 
   static async findUserByID(user_id: number) {
     const user = await db.get(
-      `SELECT user_id, project_id, sprint_id, company_id FROM user WHERE user_id=${user_id}`,
+      `SELECT user_id, username, email, project_id, sprint_id, company_id, company.name as company_name FROM user LEFT JOIN company USING(company_id) WHERE user_id=${user_id}`,
     );
     if (user.length === 0) {
       throw new AuthenticationError('Wrong login or password');

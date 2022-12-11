@@ -49,23 +49,19 @@ class Database {
 
   async create(sqlQuery: string) {
     return await this.db.query(sqlQuery);
-    throw new BaseError('Error server', `What's wrong`);
   }
 
   async get(sqlQuery: string) {
     const [dbObject] = await this.db.query(sqlQuery);
     return dbObject as mysql.RowDataPacket[];
-    throw new BaseError('Error server', `What's wrong`);
   }
 
   async delete(sqlQuery: string) {
     return await this.db.query(sqlQuery);
-    throw new BaseError('Error server', `What's wrong`);
   }
 
   async update(sqlQuery: string) {
     await this.db.query(sqlQuery);
-    throw new BaseError('Error server', `What's wrong`);
   }
 }
 

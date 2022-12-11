@@ -10,6 +10,7 @@ export type sessionPassportParams = {
   passport: {
     user: {
       user_id: number;
+      email: string;
       project_id: number | null;
       sprint_id: number | null;
       company_id: number | null;
@@ -21,6 +22,7 @@ export type sessionPassportParamsWithCompany = {
   passport: {
     user: {
       user_id: number;
+      email: string;
       project_id: number | null;
       sprint_id: number | null;
       company_id: number;
