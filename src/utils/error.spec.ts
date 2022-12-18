@@ -7,63 +7,63 @@ import {
   JWTLifeError,
   NotFoundError,
   ValidateError,
-} from './error';
+} from "./error";
 
-describe('Errors test', () => {
-  it('Base Error', () => {
+describe("Errors test", () => {
+  it("Base Error", () => {
     const err = () => {
-      throw new BaseError('test', 'testMassage');
+      throw new BaseError("test", "testMassage");
     };
-    expect(err).toThrow(new Error('testMassage'));
-    expect(err).toThrow('test');
+    expect(err).toThrow(new Error("testMassage"));
+    expect(err).toThrow("test");
   });
 
-  it('AuthenticationError', () => {
+  it("AuthenticationError", () => {
     const err = () => {
-      throw new AuthenticationError('test');
+      throw new AuthenticationError("test");
     };
-    expect(err).toThrow(new Error('test'));
+    expect(err).toThrow(new Error("test"));
   });
 
-  it('EmailExistError', () => {
+  it("EmailExistError", () => {
     const err = () => {
-      throw new EmailExistError('test');
+      throw new EmailExistError("test");
     };
-    expect(err).toThrow(new Error('test'));
+    expect(err).toThrow(new Error("test"));
   });
 
-  it('AuthorizationError', () => {
+  it("AuthorizationError", () => {
     const err = () => {
-      throw new AuthorizationError('test');
+      throw new AuthorizationError("test");
     };
-    expect(err).toThrow(new Error('test'));
+    expect(err).toThrow(new Error("test"));
   });
 
-  it('NotFoundError', () => {
+  it("NotFoundError", () => {
     const err = () => {
-      throw new NotFoundError('test');
+      throw new NotFoundError("test");
     };
-    expect(err).toThrow(new Error('test'));
+    expect(err).toThrow(new Error("test"));
   });
 
-  it('InvalidArgError', () => {
+  it("InvalidArgError", () => {
     const err = () => {
-      throw new InvalidArgError('test');
+      throw new InvalidArgError("test");
     };
-    expect(err).toThrow(new Error('test'));
+    expect(err).toThrow(new Error("test"));
   });
 
-  it('ValidateError', () => {
+  it("ValidateError", () => {
     const err = () => {
-      throw new ValidateError('test');
+      throw new ValidateError("test");
     };
-    expect(err).toThrow(new Error('test'));
+    expect(err).toThrow(new Error("test"));
   });
 
-  it('JWTLifeError', () => {
+  it("JWTLifeError", () => {
     const err = () => {
-      throw new JWTLifeError('test');
+      throw new JWTLifeError("test");
     };
-    expect(err).toThrow(new Error('test'));
+    expect(err).toThrow(new Error("test"));
   });
 });

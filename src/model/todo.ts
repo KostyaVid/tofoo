@@ -1,7 +1,13 @@
-import { spliceString, toMySqlDate, validateID, validateIDNotNull } from './../utils/helper';
-import db from './db';
-import escape from 'escape-html';
-import { StatusTodo } from './../types/types';
+import {
+  spliceString,
+  toMySqlDate,
+  validateID,
+  validateIDNotNull,
+  validateStatusTodo,
+} from "./../utils/helper";
+import db from "./db";
+import escape from "escape-html";
+import { StatusTodo } from "./../types/types";
 
 export interface ITodoBase {
   title: string;
@@ -57,14 +63,16 @@ export default class Todo implements ITodo {
       const sqlQuery = `INSERT INTO todo (title, body, deadline, author_id, assignee_id, reviewer_id, project_id, sprint_id, company_id) VALUES (${
         todoValidate.title
       }, ${todoValidate.body}, ${todoValidate.deadline}, ${String(
-        todoValidate.author_id,
-      )}, ${String(todoValidate.assignee_id)}, ${String(todoValidate.reviewer_id)}, ${
-        todoValidate.project_id
-      }, ${todoValidate.sprint_id}, ${todoValidate.company_id})`;
+        todoValidate.author_id
+      )}, ${String(todoValidate.assignee_id)}, ${String(
+        todoValidate.reviewer_id
+      )}, ${todoValidate.project_id}, ${todoValidate.sprint_id}, ${
+        todoValidate.company_id
+      })`;
 
       await db.create(sqlQuery);
-      const [todoIndex] = await db.get('SELECT LAST_INSERT_ID();');
-      return Todo.get(todoIndex['LAST_INSERT_ID()'], todoValidate.company_id);
+      const [todoIndex] = await db.get("SELECT LAST_INSERT_ID();");
+      return Todo.get(todoIndex["LAST_INSERT_ID()"], todoValidate.company_id);
     } catch (err) {
       return;
     }
@@ -77,7 +85,11 @@ export default class Todo implements ITodo {
     return new Todo(todoOut as ITodo);
   }
 
-  static async getAndProject(todo_id: number, project_id: number, company_id: number) {
+  static async getAndProject(
+    todo_id: number,
+    project_id: number,
+    company_id: number
+  ) {
     if (!validateID(todo_id)) return;
     const sqlQuery = `SELECT * FROM todo WHERE todo_id=${todo_id} AND company_id=${company_id} AND project_id=${project_id}`;
     const [todoOut] = await db.get(sqlQuery);
@@ -88,7 +100,7 @@ export default class Todo implements ITodo {
     todo_id: number,
     project_id: number,
     sprint_id: number,
-    company_id: number,
+    company_id: number
   ) {
     if (!validateID(todo_id)) return;
     const sqlQuery = `SELECT * FROM todo WHERE todo_id=${todo_id} AND company_id=${company_id} AND project_id=${project_id} AND sprint_id=${sprint_id}`;
@@ -110,31 +122,48 @@ export default class Todo implements ITodo {
     return todosOut as ITodo[];
   }
 
-  static async setAssignee(assignee_id: number, todo_id: number, company_id: number) {
+  static async setAssignee(
+    assignee_id: number,
+    todo_id: number,
+    company_id: number
+  ) {
     if (!validateID(assignee_id) || !validateID(todo_id)) return false;
     const sqlQuery = `UPDATE todo SET assignee_id=${assignee_id} WHERE todo_id=${todo_id} AND company_id=${company_id}`;
     await db.update(sqlQuery);
     return true;
   }
 
-  static async setReviewer(reviewer_id: number, todo_id: number, company_id: number) {
+  static async setReviewer(
+    reviewer_id: number,
+    todo_id: number,
+    company_id: number
+  ) {
     if (!validateID(reviewer_id) || !validateID(todo_id)) return false;
     const sqlQuery = `UPDATE todo SET reviewer_id=${reviewer_id} WHERE todo_id=${todo_id} AND company_id=${company_id}`;
     await db.update(sqlQuery);
     return true;
   }
 
-  static async setSprint(sprint_id: number, todo_id: number, company_id: number) {
+  static async setSprint(
+    sprint_id: number,
+    todo_id: number,
+    company_id: number
+  ) {
     if (!validateID(sprint_id) || !validateID(todo_id)) return false;
     const sqlQuery = `UPDATE todo SET sprint_id=${sprint_id} WHERE todo_id=${todo_id} AND company_id=${company_id}`;
     await db.update(sqlQuery);
     return true;
   }
 
-  static async setStatus(status: StatusTodo, todo_id: number, company_id: number) {
-    if (!validateID(todo_id) || !(status === 0 || status === 1 || status === 2 || status === 3))
-      return false;
-    const sqlQuery = `UPDATE todo SET status=${status} WHERE todo_id=${todo_id} AND company_id=${company_id}`;
+  static async setStatus(
+    status: StatusTodo,
+    todo_id: number,
+    company_id: number
+  ) {
+    if (!validateID(todo_id)) return false;
+    const sqlQuery = `UPDATE todo SET status=${validateStatusTodo(
+      status
+    )} WHERE todo_id=${todo_id} AND company_id=${company_id}`;
     await db.update(sqlQuery);
     return true;
   }
@@ -142,7 +171,7 @@ export default class Todo implements ITodo {
   static async setTitle(title: string, todo_id: number, company_id: number) {
     if (!validateID(todo_id)) return false;
     const sqlQuery = `UPDATE todo SET title=${escape(
-      title,
+      title
     )} WHERE todo_id=${todo_id} AND company_id=${company_id}`;
     await db.update(sqlQuery);
     return true;
@@ -151,13 +180,17 @@ export default class Todo implements ITodo {
   static async setBody(body: string, todo_id: number, company_id: number) {
     if (!validateID(todo_id)) return false;
     const sqlQuery = `UPDATE todo SET body=${escape(
-      body,
+      body
     )} WHERE todo_id=${todo_id} AND company_id=${company_id}`;
     await db.update(sqlQuery);
     return true;
   }
 
-  static async setDeadline(deadline: string, todo_id: number, company_id: number) {
+  static async setDeadline(
+    deadline: string,
+    todo_id: number,
+    company_id: number
+  ) {
     if (!validateID(todo_id)) return false;
     try {
       const date = toMySqlDate(deadline);
@@ -172,8 +205,8 @@ export default class Todo implements ITodo {
   static validate(todo: ITodoBase) {
     return {
       title: `'${spliceString(todo.title, 50)}'`,
-      body: todo.body === null ? 'null' : `'${spliceString(todo.body, 1000)}'`,
-      deadline: todo.deadline ? `'${toMySqlDate(todo.deadline)}'` : 'null',
+      body: todo.body === null ? "null" : `'${spliceString(todo.body, 1000)}'`,
+      deadline: todo.deadline ? `'${toMySqlDate(todo.deadline)}'` : "null",
       author_id: validateID(todo.author_id),
       assignee_id: validateID(todo.assignee_id),
       reviewer_id: validateID(todo.reviewer_id),

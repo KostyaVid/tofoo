@@ -1,6 +1,12 @@
-import { Status } from './../types/types';
-import { spliceString, toMySqlDate, validateID, validateIDNotNull } from './../utils/helper';
-import db from './db';
+import { Status } from "./../types/types";
+import {
+  spliceString,
+  toMySqlDate,
+  validateID,
+  validateIDNotNull,
+  validateStatus,
+} from "./../utils/helper";
+import db from "./db";
 
 export interface ISprint {
   sprint_id: number;
@@ -43,8 +49,11 @@ export class Sprint implements ISprint {
       const sqlQuery = `INSERT INTO sprint (project_id, name, end_date, company_id) VALUES (${sprintValid.project_id}, '${sprintValid.name}', '${sprintValid.end_date}', ${sprintValid.company_id});`;
 
       await db.create(sqlQuery);
-      const [springIndex] = await db.get('SELECT LAST_INSERT_ID();');
-      return Sprint.get(springIndex['LAST_INSERT_ID()'], sprintValid.company_id);
+      const [springIndex] = await db.get("SELECT LAST_INSERT_ID();");
+      return Sprint.get(
+        springIndex["LAST_INSERT_ID()"],
+        sprintValid.company_id
+      );
     } catch (error) {
       return;
     }
@@ -64,14 +73,24 @@ export class Sprint implements ISprint {
     return sprintsOut as ISprint[];
   }
 
-  static async setStatus(status: Status, sprint_id: number, company_id: number) {
-    if (!validateID(sprint_id) || !(status === 0 || status === 1 || status === 2)) return false;
-    const sqlQuery = `UPDATE sprint SET status=${status} WHERE sprint_id=${sprint_id} AND company_id=${company_id}`;
+  static async setStatus(
+    status: Status,
+    sprint_id: number,
+    company_id: number
+  ) {
+    if (!validateID(sprint_id)) return false;
+    const sqlQuery = `UPDATE sprint SET status=${validateStatus(
+      status
+    )} WHERE sprint_id=${sprint_id} AND company_id=${company_id}`;
     await db.update(sqlQuery);
     return true;
   }
 
-  static async isExistInProject(sprint_id: number, project_id: number, company_id: number) {
+  static async isExistInProject(
+    sprint_id: number,
+    project_id: number,
+    company_id: number
+  ) {
     if (!validateID(sprint_id) || !validateID(project_id)) return false;
     const sqlQuery = `SELECT sprint_id FROM sprint WHERE project_id=${project_id} AND sprint_id=${sprint_id} AND company_id=${company_id}`;
     const sprintOut = await db.get(sqlQuery);

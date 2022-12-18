@@ -1,8 +1,13 @@
-import db from './db';
-import escape from 'escape-html';
-import * as EmailValidator from 'email-validator';
-import { AuthenticationError, BaseError, EmailExistError, ValidateError } from '../utils/error';
-import { getCryptoPassword } from '../utils/crypto';
+import db from "./db";
+import escape from "escape-html";
+import * as EmailValidator from "email-validator";
+import {
+  AuthenticationError,
+  BaseError,
+  EmailExistError,
+  ValidateError,
+} from "../utils/error";
+import { getCryptoPassword } from "../utils/crypto";
 
 export interface IUser {
   user_id: number;
@@ -23,7 +28,11 @@ export class User {
   sprint_id?: number | null;
   company_id?: number | null;
 
-  constructor(public readonly user_id: number, public username: string, public email: string) {
+  constructor(
+    public readonly user_id: number,
+    public username: string,
+    public email: string
+  ) {
     this.project_id = null;
     this.sprint_id = null;
     this.company_id = null;
@@ -41,19 +50,21 @@ export class User {
     this.validate(username, password, email);
 
     //find user with email in the database
-    const isUserExist = await db.get(`SELECT user_id FROM user WHERE email='${email}'`);
+    const isUserExist = await db.get(
+      `SELECT user_id FROM user WHERE email='${email}'`
+    );
 
-    if (isUserExist.length > 0) throw new EmailExistError('Email does exist');
+    if (isUserExist.length > 0) throw new EmailExistError("Email does exist");
 
     //Insert new user to the database
     const hashPassword = getCryptoPassword(password);
     const sqlQuery = `INSERT INTO user(username, password, email, project_id, sprint_id, company_id) VALUES ('${escape(
-      username,
+      username
     )}', '${hashPassword.toString()}', '${email}', null, null, null)`;
     await db.create(sqlQuery);
 
     const userMeta = await db.get(
-      `SELECT user_id, username, email,  project_id, sprint_id, company_id FROM user WHERE email='${email}'`,
+      `SELECT user_id, username, email,  project_id, sprint_id, company_id FROM user WHERE email='${email}'`
     );
 
     //return new user
@@ -61,12 +72,14 @@ export class User {
       const user: IUser = (userMeta as [IUser])[0];
       return new User(user.user_id, user.username, user.email);
     }
-    throw new BaseError('Error server', `What's wrong`);
+    throw new BaseError("Error server", `What's wrong`);
   }
 
   static async deleteUser(email: string) {
     const mail = escape(email);
-    const isUserExist = await db.get(`SELECT email FROM user WHERE email='${mail}'`);
+    const isUserExist = await db.get(
+      `SELECT email FROM user WHERE email='${mail}'`
+    );
 
     if (isUserExist.length === 0) return false;
 
@@ -134,17 +147,17 @@ export class User {
     const hashPassword = getCryptoPassword(password);
     const mail = escape(email);
     const user = await db.get(
-      `SELECT user_id, username, password, email, project_id, sprint_id, company_id, company.name as company_name FROM user LEFT JOIN company USING(company_id) WHERE email='${mail}'`,
+      `SELECT user_id, username, password, email, project_id, sprint_id, company_id, company.name as company_name FROM user LEFT JOIN company USING(company_id) WHERE email='${mail}'`
     );
     if (user.length === 0) {
-      throw new AuthenticationError('Wrong login or password');
+      throw new AuthenticationError("Wrong login or password");
     }
 
     if (user[0].password === hashPassword.toString()) {
       delete user[0].password;
       return user[0] as IUser;
     }
-    throw new AuthenticationError('Wrong login or password');
+    throw new AuthenticationError("Wrong login or password");
   }
 
   /**
@@ -155,40 +168,45 @@ export class User {
    */
   static async checkAuthLocalByID(user_id: number, password: string) {
     const hashPassword = getCryptoPassword(password);
-    const user = await db.get(`SELECT user_id, password FROM user WHERE user_id='${user_id}'`);
+    const user = await db.get(
+      `SELECT user_id, password FROM user WHERE user_id='${user_id}'`
+    );
     if (user.length === 0) {
-      throw new AuthenticationError('Wrong login or password');
+      throw new AuthenticationError("Wrong login or password");
     }
 
     if (user[0].password === hashPassword.toString()) {
       return user[0];
     }
-    throw new AuthenticationError('Wrong login or password');
+    throw new AuthenticationError("Wrong login or password");
   }
 
   static async findUserByID(user_id: number) {
     const user = await db.get(
-      `SELECT user_id, username, email, project_id, sprint_id, company_id, company.name as company_name FROM user LEFT JOIN company USING(company_id) WHERE user_id=${user_id}`,
+      `SELECT user_id, username, email, project_id, sprint_id, company_id, company.name as company_name FROM user LEFT JOIN company USING(company_id) WHERE user_id=${user_id}`
     );
     if (user.length === 0) {
-      throw new AuthenticationError('Wrong login or password');
+      throw new AuthenticationError("Wrong login or password");
     }
     return user[0] as User;
   }
 
   private static validate(username: string, password: string, email: string) {
-    if (!EmailValidator.validate(email)) throw new ValidateError('Wrong format email');
+    if (!EmailValidator.validate(email))
+      throw new ValidateError("Wrong format email");
 
     if (username.length < User.minLengthUserName)
-      throw new ValidateError('Name must contain at least 3 characters');
+      throw new ValidateError("Name must contain at least 3 characters");
 
     if (username.length > User.maxLengthUserName)
-      throw new ValidateError('Name must contain no more than 40 characters');
+      throw new ValidateError("Name must contain no more than 40 characters");
 
     if (password.length < User.minLengthPassword)
-      throw new ValidateError('Password must contain at least 3 characters');
+      throw new ValidateError("Password must contain at least 3 characters");
 
     if (password.length > User.maxLengthPassword)
-      throw new ValidateError('Password must contain no more than 40 characters');
+      throw new ValidateError(
+        "Password must contain no more than 40 characters"
+      );
   }
 }

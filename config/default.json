@@ -4,15 +4,15 @@
     "port": 3000,
     "backlog": 10
   },
-  "db":{
+  "db": {
     "database": "test",
     "host": "localhost",
     "port": 3306,
     "user": "root",
     "password": "example"
   },
-  "auth":{
-    "JWTToken":"SuperSecretKey",
+  "auth": {
+    "JWTToken": "SuperSecretKey",
     "sessionKey": "sessionKey"
   }
- }
+}

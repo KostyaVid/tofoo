@@ -1,8 +1,8 @@
-import sha256 from 'crypto-js/sha256';
-import Jwt from 'jsonwebtoken';
-import config from 'config';
+import sha256 from "crypto-js/sha256";
+import Jwt from "jsonwebtoken";
+import config from "config";
 
-const JWTKey: string = config.get('auth.JWTToken');
+const JWTKey: string = config.get("auth.JWTToken");
 
 export function getCryptoPassword(password: string) {
   return sha256(password);

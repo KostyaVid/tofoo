@@ -1,10 +1,10 @@
-import session from 'express-session';
-import passport from 'passport';
-import { createClient } from 'redis';
-import connectRedis from 'connect-redis';
-import config from 'config';
-import logger from './../utils/logger';
-import { User } from './../model/user';
+import session from "express-session";
+import passport from "passport";
+import { createClient } from "redis";
+import connectRedis from "connect-redis";
+import config from "config";
+import logger from "./../utils/logger";
+import { User } from "./../model/user";
 
 passport.serializeUser(function (user, cb) {
   process.nextTick(function () {
@@ -18,9 +18,9 @@ passport.deserializeUser(function (user: User, cb) {
   });
 });
 
-const sessionKey: string = config.get('auth.sessionKey');
+const sessionKey: string = config.get("auth.sessionKey");
 const redisClient = createClient({ legacyMode: true });
-redisClient.on('error', (err) => logger.error(err));
+redisClient.on("error", (err) => logger.error(err));
 redisClient.connect().catch((err) => logger.error(err));
 const RedisStore = connectRedis(session);
 
@@ -34,7 +34,7 @@ const sessionMiddleware = session({
   cookie: {
     maxAge: 10 * 60 * 1000,
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production' ? true : false,
+    secure: process.env.NODE_ENV === "production" ? true : false,
   },
 });
 

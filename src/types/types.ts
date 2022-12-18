@@ -1,6 +1,6 @@
-import session from 'express-session';
+import session from "express-session";
 
-export interface IParamsServer {
+export interface ParamsServer {
   host: string;
   port: number;
   backlog: number;
@@ -30,10 +30,17 @@ export type sessionPassportParamsWithCompany = {
   };
 };
 
-export type Status = 0 | 1 | 2;
-export type StatusTodo = 0 | 1 | 2 | 3;
+export type Status = "Opened" | "In Progress" | "Done";
+export type StatusTodo =
+  | "Opened"
+  | "In Progress"
+  | "Reviewer"
+  | "Done"
+  | "Reopened";
 
-export type sessionParams = session.Session & Partial<session.SessionData> & sessionPassportParams;
+export type sessionParams = session.Session &
+  Partial<session.SessionData> &
+  sessionPassportParams;
 export type sessionParamsWithCompany = session.Session &
   Partial<session.SessionData> &
   sessionPassportParamsWithCompany;

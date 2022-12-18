@@ -1,22 +1,20 @@
-version: '3.1'
+version: "3.1"
 
 services:
-
   tofoo:
     image: mysql
-    restart: always
+    restart: "no"
     command: --default-time-zone='+03:00'
     environment:
       MYSQL_ROOT_PASSWORD: example
     ports:
       - 3306:3306
 
-
   cache:
     image: redis:alpine
-    restart: always
+    restart: "no"
     ports:
-      - '6379:6379'
+      - "6379:6379"
     command: redis-server --save 60 1 --loglevel warning
 
   # web:
@@ -32,6 +30,6 @@ services:
 
   adminer:
     image: adminer
-    restart: always
+    restart: "no"
     ports:
       - 8000:8080

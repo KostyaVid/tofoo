@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from 'express';
-import logger from './../utils/logger';
+import { NextFunction, Request, Response } from "express";
+import logger from "./../utils/logger";
 
 import {
   BaseError,
@@ -8,7 +8,7 @@ import {
   AuthenticationError,
   ValidateError,
   EmailExistError,
-} from './../utils/error';
+} from "./../utils/error";
 
 /**
  *This middleware should connect last with app
@@ -22,7 +22,7 @@ export default function errorMiddleware(
   req: Request,
   res: Response,
   // eslint-disable-next-line
-  next: NextFunction,
+  next: NextFunction
 ) {
   logger.error(`Time: ${new Date().toISOString()}. Error: ${err.message}`);
   if (err instanceof NotFoundError) {
@@ -53,5 +53,5 @@ export default function errorMiddleware(
 
   logger.error(err.stack);
   res.status(500);
-  res.send({ massage: 'ServerError' });
+  res.send({ massage: "ServerError" });
 }

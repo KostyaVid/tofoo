@@ -13,13 +13,13 @@ export class BaseError extends Error {
  */
 export class AuthenticationError extends BaseError {
   constructor(message: string) {
-    super('AuthenticationError', message);
+    super("AuthenticationError", message);
   }
 }
 
 export class EmailExistError extends BaseError {
   constructor(message: string) {
-    super('EmailExistError', message);
+    super("EmailExistError", message);
   }
 }
 
@@ -28,7 +28,7 @@ export class EmailExistError extends BaseError {
  */
 export class AuthorizationError extends BaseError {
   constructor(message: string) {
-    super('AuthorizationError', message);
+    super("AuthorizationError", message);
   }
 }
 
@@ -37,7 +37,7 @@ export class AuthorizationError extends BaseError {
  */
 export class NotFoundError extends BaseError {
   constructor(message: string) {
-    super('NotFoundError', message);
+    super("NotFoundError", message);
   }
 }
 
@@ -46,7 +46,7 @@ export class NotFoundError extends BaseError {
  */
 export class InvalidArgError extends BaseError {
   constructor(message: string) {
-    super('InvalidArgError', message);
+    super("InvalidArgError", message);
   }
 }
 
@@ -55,11 +55,11 @@ export class InvalidArgError extends BaseError {
  */
 export class ValidateError extends BaseError {
   constructor(message: string) {
-    super('Validate', message);
+    super("Validate", message);
   }
 }
 export class JWTLifeError extends BaseError {
   constructor(message: string) {
-    super('JWTLife', message);
+    super("JWTLife", message);
   }
 }
