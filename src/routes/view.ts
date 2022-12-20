@@ -151,7 +151,7 @@ router.use("/*", async (req, res, next) => {
   }
 });
 
-router.post("/project", async (req, res, next) => {
+router.post("/projects", async (req, res, next) => {
   const name: string = req.body?.name;
   const end_date: string = req.body?.end_date;
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
@@ -168,7 +168,7 @@ router.post("/project", async (req, res, next) => {
   }
 });
 
-router.post("/project/:project/sprint", async (req, res, next) => {
+router.post("/projects/:project/sprint", async (req, res, next) => {
   const name: string = req.body?.name;
   const end_date: string = req.body?.end_date;
   const project_id = Number(req.params.project);
@@ -195,7 +195,7 @@ router.post("/project/:project/sprint", async (req, res, next) => {
   }
 });
 
-router.post("/project/:project/todo", async (req, res, next) => {
+router.post("/projects/:project/todo", async (req, res, next) => {
   const title: string = req.body?.title;
   const body: string = req.body?.body;
   const author_id: number = (req.session as sessionParams)?.passport?.user
@@ -230,7 +230,7 @@ router.post("/project/:project/todo", async (req, res, next) => {
   }
 });
 
-router.post("/project/:project/sprint/:sprint/todo", async (req, res, next) => {
+router.post("/projects/:project/sprint/:sprint/todo", async (req, res, next) => {
   const title: string = req.body?.title;
   const body: string = req.body?.body;
   const author_id: number = (req.session as sessionParams)?.passport?.user
@@ -276,7 +276,7 @@ router.post("/project/:project/sprint/:sprint/todo", async (req, res, next) => {
   }
 });
 
-router.get("/project", async (req, res, next) => {
+router.get("/projects", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   try {
@@ -287,7 +287,7 @@ router.get("/project", async (req, res, next) => {
   }
 });
 
-router.get("/project/:project", async (req, res, next) => {
+router.get("/projects/:project", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const project_id = Number(req.params.project);
@@ -299,7 +299,7 @@ router.get("/project/:project", async (req, res, next) => {
   }
 });
 
-router.get("/project/:project/sprint", async (req, res, next) => {
+router.get("/projects/:project/sprint", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const project_id = Number(req.params.project);
@@ -311,7 +311,7 @@ router.get("/project/:project/sprint", async (req, res, next) => {
   }
 });
 
-router.get("/project/:project/sprint/:sprint", async (req, res, next) => {
+router.get("/projects/:project/sprint/:sprint", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const sprint_id = Number(req.params.sprint);
@@ -323,7 +323,7 @@ router.get("/project/:project/sprint/:sprint", async (req, res, next) => {
   }
 });
 
-router.get("/project/:project/todo", async (req, res, next) => {
+router.get("/projects/:project/todo", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const project_id = Number(req.params.project);
@@ -335,7 +335,7 @@ router.get("/project/:project/todo", async (req, res, next) => {
   }
 });
 
-router.get("/project/:project/sprint/:sprint/todo", async (req, res, next) => {
+router.get("/projects/:project/sprint/:sprint/todo", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const sprint_id = Number(req.params.sprint);
@@ -347,7 +347,7 @@ router.get("/project/:project/sprint/:sprint/todo", async (req, res, next) => {
   }
 });
 
-router.get("/project/:project/todo/:todo", async (req, res, next) => {
+router.get("/projects/:project/todo/:todo", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const project_id = Number(req.params.project);
@@ -361,7 +361,7 @@ router.get("/project/:project/todo/:todo", async (req, res, next) => {
 });
 
 router.get(
-  "/project/:project/sprint/:sprint/todo/:todo",
+  "/projects/:project/sprint/:sprint/todo/:todo",
   async (req, res, next) => {
     const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
       ?.company_id;
@@ -399,7 +399,7 @@ router.patch("/company/leave", async (req, res, next) => {
   }
 });
 
-router.patch("/project/:project/status", async (req, res, next) => {
+router.patch("/projects/:project/status", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const project_id = Number(req.params.project);
@@ -416,7 +416,7 @@ router.patch("/project/:project/status", async (req, res, next) => {
 });
 
 router.patch(
-  "/project/:project/sprint/:sprint/status",
+  "/projects/:project/sprint/:sprint/status",
   async (req, res, next) => {
     const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
       ?.company_id;
@@ -434,7 +434,7 @@ router.patch(
   }
 );
 
-router.patch("/project/*/todo/:todo/status", async (req, res, next) => {
+router.patch("/projects/*/todo/:todo/status", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const todo_id = Number(req.params.todo);
@@ -450,7 +450,7 @@ router.patch("/project/*/todo/:todo/status", async (req, res, next) => {
   }
 });
 
-router.patch("/project/*/todo/:todo/assignee", async (req, res, next) => {
+router.patch("/projects/*/todo/:todo/assignee", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const todo_id = Number(req.params.todo);
@@ -470,7 +470,7 @@ router.patch("/project/*/todo/:todo/assignee", async (req, res, next) => {
   }
 });
 
-router.patch("/project/*/todo/:todo/reviewer", async (req, res, next) => {
+router.patch("/projects/*/todo/:todo/reviewer", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const todo_id = Number(req.params.todo);
@@ -490,7 +490,7 @@ router.patch("/project/*/todo/:todo/reviewer", async (req, res, next) => {
   }
 });
 
-router.patch("/project/*/todo/:todo/body", async (req, res, next) => {
+router.patch("/projects/*/todo/:todo/body", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const todo_id = Number(req.params.todo);
@@ -506,7 +506,7 @@ router.patch("/project/*/todo/:todo/body", async (req, res, next) => {
   }
 });
 
-router.patch("/project/*/todo/:todo/title", async (req, res, next) => {
+router.patch("/projects/*/todo/:todo/title", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const todo_id = Number(req.params.todo);
@@ -522,7 +522,7 @@ router.patch("/project/*/todo/:todo/title", async (req, res, next) => {
   }
 });
 
-router.patch("/project/*/todo/:todo/sprint", async (req, res, next) => {
+router.patch("/projects/*/todo/:todo/sprint", async (req, res, next) => {
   const company_id = (req.session as sessionParamsWithCompany)?.passport?.user
     ?.company_id;
   const todo_id = Number(req.params.todo);
